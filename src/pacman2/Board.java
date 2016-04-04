@@ -16,10 +16,10 @@ public class Board extends JPanel{
 	private JPanel background;
 	private JPanel itemsBoard; 	
 	public JLayeredPane multiBoard;
-	private int mapHeight;
-	private int mapWidth;
-	private double squareHeight;
-	private double squareWidth;
+	public int mapHeight;
+	public int mapWidth;
+	public double squareHeight;
+	public double squareWidth;
 	
 	final int W=1; // Wall.
 	final int F=2; // Crossroads with food 

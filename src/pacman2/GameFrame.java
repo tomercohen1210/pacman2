@@ -25,9 +25,9 @@ public class GameFrame extends JFrame {
 		// Display the window
 		this.setSize(new Dimension(445,454));
 		this.setVisible(true);
-		pacman = new Pacman(14*squareWidth+squareWidth/2,22.5*(squareHeight)+squareHeight/2,this);
+		pacman = new Pacman(14*gameBoard.squareWidth+gameBoard.squareWidth/2,22.5*(gameBoard.squareHeight)+gameBoard.squareHeight/2,this);
 		pacman.setOpaque(false);
-		pacman.setSize(mapWidth, mapHeight);
+		pacman.setSize(gameBoard.mapWidth, gameBoard.mapHeight);
 		gameBoard.multiBoard.add(pacman,new Integer(3));
 		pacman.setFocusable(true);
 		
