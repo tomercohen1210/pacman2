@@ -9,9 +9,17 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class gameCharacter extends JPanel implements KeyListener {
+public class gameCharacter extends JPanel  {
 	
-	
+	private int x;
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
 	
 	
 
