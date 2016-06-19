@@ -14,8 +14,8 @@ import javax.swing.Timer;
 
 
 public class Pacman extends gameCharacter implements KeyListener{
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 5L;
+	private static Pacman _instance;
 	private Board board;
 	private Timer timer;
 	private ImageIcon image;
@@ -254,6 +254,13 @@ public class Pacman extends gameCharacter implements KeyListener{
 		deltaY=0;
 		timer.stop();
 		
+	}
+
+
+	public static Pacman GetInstance() {
+		if (_instance == null) 
+			_instance = new Pacman(14*Board.squareWidth+Board.squareWidth/2,22.5*(Board.squareHeight)+Board.squareHeight/2,Board.GetInstance(),"Pacman");	
+		return _instance;
 	}
 
 

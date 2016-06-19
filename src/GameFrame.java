@@ -26,7 +26,11 @@ public class GameFrame extends JFrame {
 		// Create and set up the window
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// Create the content pane
-		gameBoard = new Board(name,time,dif);
+		gameBoard = Board.GetInstance();
+		gameBoard.PlayerName= name;
+		gameBoard.ghostStartTime = time;
+		gameBoard.difficulty = dif;
+		gameBoard.setBoard();
 		this.add(gameBoard,0);
 		// Display the window
 		this.setSize(new Dimension(445,454));

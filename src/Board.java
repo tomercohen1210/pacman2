@@ -27,20 +27,21 @@ import javax.swing.Timer;
  */
 public class Board extends JPanel{
 	private static final long serialVersionUID = 1L;
+	private static Board _instance;
 	private Pacman pacman;
 	private JPanel background;
 	private JPanel itemsBoard; 	
 	private JLayeredPane multiBoard;
 	private int mapHeight;
 	private int mapWidth;
-	private double squareHeight;
-	private double squareWidth;
+	protected static double squareHeight;
+	protected static double squareWidth;
 	private Ghost [] ghosts;
 	private Timer timer;
 	private int lives;
-	private String ghostTime;
-	private String player;
-	private String diff;
+	public String ghostStartTime;
+	public String PlayerName;
+	public String difficulty;
 	private long startTime,endTime; 
 	private int  startFood;
 
@@ -48,15 +49,17 @@ public class Board extends JPanel{
 	final int W=1; // Wall.
 	final int F=2; // Crossroads with food 
 	final int E=3; // Empty crossroads
+	final int S=4; // Crossroads with Super food 
+	final int M=5; // Crossroads with Mighty food 
 	// represents the board game
 	private int board[][] = {
 			//-----------------------X-----------------------------//
 			{W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W},
-			{W,F,F,F,F,F,F,F,F,F,F,F,F,W,W,F,F,F,F,F,F,F,F,F,F,F,F,W},
+			{W,M,F,F,F,F,F,F,F,F,F,F,F,W,W,F,F,F,F,F,F,F,F,F,F,F,F,W},
 			{W,F,W,W,W,W,F,W,W,W,W,W,F,W,W,F,W,W,W,W,W,F,W,W,W,W,F,W},
 			{W,F,W,W,W,W,F,W,W,W,W,W,F,W,W,F,W,W,W,W,W,F,W,W,W,W,F,W},
 			{W,F,W,W,W,W,F,W,W,W,W,W,F,W,W,F,W,W,W,W,W,F,W,W,W,W,F,W},
-			{W,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,W},
+			{W,F,F,F,F,F,F,F,F,F,F,F,F,F,S,F,F,F,F,F,F,F,F,F,F,F,F,W},
 			{W,F,W,W,W,W,F,W,W,F,W,W,W,W,W,W,W,W,F,W,W,F,W,W,W,W,F,W},
 			{W,F,W,W,W,W,F,W,W,F,W,W,W,W,W,W,W,W,F,W,W,F,W,W,W,W,F,W},
 			{W,F,F,F,F,F,F,W,W,F,F,F,F,W,W,F,F,F,F,W,W,F,F,F,F,F,F,W},
@@ -74,33 +77,29 @@ public class Board extends JPanel{
 			{W,F,F,F,F,F,F,F,F,F,F,F,F,W,W,F,F,F,F,F,F,F,F,F,F,F,F,W},
 			{W,F,W,W,W,W,F,W,W,W,W,W,F,W,W,F,W,W,W,W,W,F,W,W,W,W,F,W},
 			{W,F,W,W,W,W,F,W,W,W,W,W,F,W,W,F,W,W,W,W,W,F,W,W,W,W,F,W},
-			{W,F,F,F,W,W,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,W,W,F,F,F,W},
+			{W,F,F,F,W,W,F,F,F,F,F,F,F,S,F,F,F,F,F,F,F,F,W,W,F,F,F,W},
 			{W,W,W,F,W,W,F,W,W,F,W,W,W,W,W,W,W,W,F,W,W,F,W,W,F,W,W,W},
 			{W,W,W,F,W,W,F,W,W,F,W,W,W,W,W,W,W,W,F,W,W,F,W,W,F,W,W,W},
 			{W,F,F,F,F,F,F,W,W,F,F,F,F,W,W,F,F,F,F,W,W,F,F,F,F,F,F,W},
 			{W,F,W,W,W,W,W,W,W,W,W,W,F,W,W,F,W,W,W,W,W,W,W,W,W,W,F,W},
 			{W,F,W,W,W,W,W,W,W,W,W,W,F,W,W,F,W,W,W,W,W,W,W,W,W,W,F,W},
-			{W,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,W},
+			{W,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,M,W},
 			{W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W}
 	};
 	private int foodCount;
 	
 	//Constructor
-	public Board(String name, String time, String dif){
+	private Board(){
+		
+		
+	}
+
+	public void setBoard() {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		mapHeight=416;
 		mapWidth=429;
 		squareHeight=mapHeight/31;
 		squareWidth=mapWidth/28;
-		player=name;
-		ghostTime=time;
-		diff=dif;
-		setBoard();
-		
-	}
-
-	private void setBoard() {
-		
 		// Creates and set-up the layered pane.
 				multiBoard = new JLayeredPane();
 				multiBoard.setPreferredSize(new Dimension(mapHeight, mapWidth));
@@ -118,17 +117,17 @@ public class Board extends JPanel{
 				//set lives
 				lives=3;
 				// Places Pacman on the board.
-				pacman = placePacman(player);
+				pacman = Pacman.GetInstance();
 				pacman.setOpaque(false);
 				pacman.setSize(mapWidth+1, mapHeight+1);
 				multiBoard.add(pacman,new Integer(3));
 				pacman.setFocusable(true);
-				if (diff.equals("Hard")){
+				if (difficulty.equals("Hard")){
 				ghosts = new Ghost [4];
-				ghosts[0] = new Ghost("orange",17,this,Integer.parseInt(ghostTime));
-				ghosts[1] = new Ghost("pink",18,this,Integer.parseInt(ghostTime));
-				ghosts[2] = new Ghost("red",15,this,Integer.parseInt(ghostTime));
-				ghosts[3] = new Ghost("blue",14,this,Integer.parseInt(ghostTime));
+				ghosts[0] = new StrongGhost("orange",17,this,Integer.parseInt(ghostStartTime));
+				ghosts[1] = new WeakGhost("pink",18,this,Integer.parseInt(ghostStartTime));
+				ghosts[2] = new StrongGhost("red",15,this,Integer.parseInt(ghostStartTime));
+				ghosts[3] = new WeakGhost("blue",14,this,Integer.parseInt(ghostStartTime));
 				
 				for (int i=0;i<4;i++){
 				ghosts[i].setOpaque(false);
@@ -137,8 +136,8 @@ public class Board extends JPanel{
 				}}
 				else {
 					ghosts = new Ghost [2];
-					ghosts[0] = new Ghost("orange",17,this,Integer.parseInt(ghostTime));
-					ghosts[1] = new Ghost("pink",15,this,Integer.parseInt(ghostTime));
+					ghosts[0] = new WeakGhost("orange",17,this,Integer.parseInt(ghostStartTime));
+					ghosts[1] = new StrongGhost("red",15,this,Integer.parseInt(ghostStartTime));
 					
 					
 					for (int i=0;i<2;i++){
@@ -190,7 +189,7 @@ public class Board extends JPanel{
 						if (!Files.exists(Paths.get("firstTimeDead.txt")))
 							Files.createFile(Paths.get("firstTimeDead.txt"));
 						
-					Files.write(Paths.get("firstTimeDead.txt"), (player + " " + endTime+" Sec" +" \n").getBytes(), StandardOpenOption.APPEND);
+					Files.write(Paths.get("firstTimeDead.txt"), (PlayerName + " " + endTime+" Sec" +" \n").getBytes(), StandardOpenOption.APPEND);
 					
 					
 					
@@ -243,14 +242,14 @@ public class Board extends JPanel{
 				if (!Files.exists(Paths.get("Points.txt")))
 					Files.createFile(Paths.get("Points.txt"));
 				
-			Files.write(Paths.get("Points.txt"), (player + " " + Integer.toString(startFood-foodCount+lives*20)+" Points" +" \n").getBytes(), StandardOpenOption.APPEND);
+			Files.write(Paths.get("Points.txt"), (PlayerName + " " + Integer.toString(startFood-foodCount+lives*20)+" Points" +" \n").getBytes(), StandardOpenOption.APPEND);
 				
 				
 				if (lives==0){
 				if (!Files.exists(Paths.get("TimeDead.txt")))
 					Files.createFile(Paths.get("TimeDead.txt"));
 				
-			Files.write(Paths.get("TimeDead.txt"), (player + " " + endTime+" Sec" +" \n").getBytes(), StandardOpenOption.APPEND);
+			Files.write(Paths.get("TimeDead.txt"), (PlayerName + " " + endTime+" Sec" +" \n").getBytes(), StandardOpenOption.APPEND);
 				}
 			
 			
@@ -270,7 +269,7 @@ public class Board extends JPanel{
 	public void restartApplication() 
 	{
 	 timer.stop();
-	 new GameFrame(player,ghostTime,diff);
+	 new GameFrame(PlayerName,ghostStartTime,difficulty);
 	 Component comp = SwingUtilities.getRoot(this);
 	   ((Window) comp).dispose();
 	}
@@ -319,13 +318,7 @@ public class Board extends JPanel{
 		return background;
 	}
 
-	/**
-	 * This function return a new pucman with his initial place
-	 * @return Pacman = the initial pacman
-	 */
-	private Pacman placePacman(String name){
-		return new Pacman(14*squareWidth+squareWidth/2,22.5*(squareHeight)+squareHeight/2,this,name);
-	}
+
 	
 	
 	public int Cell (int x , int y){
@@ -378,5 +371,9 @@ public class Board extends JPanel{
 		multiBoard.add(comp,num);
 	}
 
-
+	public static Board GetInstance() {
+		if (_instance == null ) 
+			_instance = new Board();
+		return _instance;
+	}
 }

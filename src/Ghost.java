@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
-public class Ghost extends gameCharacter {
+public abstract class Ghost extends gameCharacter {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -21,8 +21,8 @@ public class Ghost extends gameCharacter {
 	boolean out;
 	int last;
 	int ghostTime;
-	private Random rand;
-
+	
+	protected MoveAlgoritem moveAlgoritem;
 
 	private String color;
 
@@ -32,7 +32,7 @@ public class Ghost extends gameCharacter {
 		this.color =color;
 		last=0;
 		out =false;
-		rand = new Random();
+
 		deltaX=0;
 		deltaY=0;
 		board=_board;
@@ -92,9 +92,9 @@ public class Ghost extends gameCharacter {
 		else{
 		
 		if (true){
-			int moveTo=rand.nextInt(4)+1;
 			if (!out || (deltaX==0 && deltaY==0)){
-				whereToMove(moveTo);
+				
+				whereToMove(moveAlgoritem.moveTo(this, Pacman.GetInstance()));
 		}
 		}
 		}
