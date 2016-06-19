@@ -1,11 +1,13 @@
+import java.util.Random;
 
 public class MoveToPacman implements MoveAlgoritem {
-
+	private Random rand=new Random();
 	@Override
 	public int moveTo(Ghost ghost, Pacman pacman) {
 		double diffX = ghost.x -pacman.x;
 		double diffY = ghost.y -pacman.y;
-		if (Math.abs(diffX) > Math.abs(diffY)) {
+		
+		if (rand.nextInt(2)>0) {
 			if (diffX>0) {
 				return 2; //left
 			} else {
